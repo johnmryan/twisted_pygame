@@ -9,13 +9,13 @@ from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
 
 ###################    Globals   ######################
-PLAYER1_HOST = "student02.cse.nd.edu"
 PLAYER1_PORT = 40028
 PLAYER1_OPEN_PORT = 9575
+PLAYER1_HOST = ""
 
-PLAYER2_HOST = "student02.cse.nd.edu"
 PLAYER2_PORT = 40046
 PLAYER2_OPEN_PORT = 9576
+PLAYER2_HOST = ""
 
 # Global deferred queue, handles input from both players
 dq = DeferredQueue()
@@ -29,6 +29,7 @@ class Player1_IncomingConnFactory(Factory):
 class Player1_IncomingConnection(Protocol):
 	def __init__(self, addr):
 		self.addr = addr
+		PLAYER1_HOST = addr.host
 
 	def dataReceived(self, data):
 		# data received from player 1
@@ -57,6 +58,7 @@ class Player2_IncomingConnFactory(Factory):
 class Player2_IncomingConnection(Protocol):
 	def __init__(self, addr):
 		self.addr = addr
+		PLAYER2_HOST = addr.host
 
 	def dataReceived(self, data):
 		# data received from player 2
