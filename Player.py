@@ -62,9 +62,10 @@ class SendConnection(Protocol):
         print 'received data' + str(data)
 
     def connectionMade(self):
-        print "connection made: " #+ str(port)
+        print "connected as Player 1"
+        #3try:
         reactor.listenTCP(RECEIVE_PORT1, ReceiveConnectionFactory())
-
+        #except Exception as ex:
 
     def connectionLost(self, reason):
         print 'lost connection:'
@@ -73,7 +74,7 @@ class SendConnection(Protocol):
         print 'sending: '+str(data)
         self.transport.write(data)
 
-class SendConnFactry(ClientFactory):
+class SendConnFactory(ClientFactory):
     #def __init__(self):
         #self.connectAttempts = 0
 
@@ -82,10 +83,13 @@ class SendConnFactry(ClientFactory):
 
     def clientConnectionFailed(self, connector, reason):
         print 'connect failed, connecting as Player 2'
-	player = 2
-        reactor.connectTCP(HOST, 40046, SendConnFactry())
+	#player = 2
+        reactor.connectTCP(GAME_SERVER, SEND_PORT2, SendConnFactory())
 
 if __name__ == "__main__":
-    reactor.connectTCP(GAME_SERVER, int(SEND_PORT1), SendConnFactry())
+    try: 
+        reactor.connectTCP(GAME_SERVER, int(SEND_PORT1), SendConnFactory())
+    except Exception as ex:
+        reactor.connectTCP(GAME_SERVER, int(SEND_PORT2), SendConnFactory)
     #reactor.listenTCP(RECEIVE_PORT1, ReceiveConnectionFactory())
     reactor.run()
