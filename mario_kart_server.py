@@ -9,7 +9,7 @@ from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
 
 ###################    Globals   ######################
-PLAYER1_HOST = "student00.cse.nd.edu"
+PLAYER1_HOST = "student02.cse.nd.edu"
 PLAYER1_PORT = 40028
 PLAYER1_OPEN_PORT = 9575
 
@@ -38,8 +38,6 @@ class Player1_IncomingConnection(Protocol):
 		print "Connection receieved from player 1"
 		# listen for player 2
 		reactor.listenTCP(PLAYER2_PORT, Player2_IncomingConnFactory())
-		# initiate outgoing
-		reactor.connectTCP(PLAYER1_HOST, PLAYER1_OPEN_PORT, Player1_OutgoingConnFactory())
 
 	def connectionLost(self, reason):
 		print "Lost connection from player 1:", str(reason)
@@ -66,8 +64,8 @@ class Player2_IncomingConnection(Protocol):
 
 	def connectionMade(self):
 		print "Connection receieved from player 2"
-		# initiate outgoing connection
-		reactor.connectTCP(PLAYER2_HOST, PLAYER2_OPEN_PORT, Player2_OutgoingConnFactory())
+		# initiate outgoing to player 1
+		reactor.connectTCP(PLAYER1_HOST, PLAYER1_OPEN_PORT, Player1_OutgoingConnFactory())
 
 	def connectionLost(self, reason):
 		print "Lost connection from player 2:", str(reason)
@@ -91,6 +89,8 @@ class Player1_OutgoingConnection(Protocol):
 
 	def connectionMade(self):
 		print "Outgoing connection made to player 1"
+		# initiate outgoing connection
+		reactor.connectTCP(PLAYER2_HOST, PLAYER2_OPEN_PORT, Player2_OutgoingConnFactory())
 
 	def connectionLost(self, reason):
 		print "Lost outgoing connection from player 1:", str(reason)
@@ -105,6 +105,7 @@ class Player2_OutgoingConnection(Protocol):
 
 	def connectionMade(self):
 		print "Outgoing connection made to player 2"
+		print "Ready to begin game!"
 
 	def connectionLost(self, reason):
 		print "Lost outgoing connection from player 2:", str(reason)
