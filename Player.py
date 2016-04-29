@@ -27,7 +27,7 @@ RECEIVE_PORT2 = 9576
 #SERVER sends on
 #9575
 #9576
-
+player = 1
 
 
 class Player(pygame.sprite.Sprite):
@@ -56,8 +56,8 @@ class receiveConnection(Protocol):
         print 'send:'
 
 class ReceiveConnectionFactory(ClientFactory):
-    def __init__(self, sendConn):
-        self.sendConn = sendConn
+    #def __init__(self, sendConn):
+        #self.sendConn = sendConn
 
     def buildProtocol(self, addr):
         return ReceiveConnection(self.sendConn)
@@ -68,7 +68,10 @@ class SendConnection(Protocol):
 
     def connectionMade(self):
         print "connection made: " #+ str(port)
-        reactor.listenTCP(GAME_SERVER, int(RECEIVE_PORT1), ReceiveConnectionFactory(self))
+	if player == 1:
+            reactor.listenTCP(int(RECEIVE_PORT1), ReceiveConnectionFactory(self))
+        else:
+            reactor.listenTCP(int(RECEIVE_PORT2), ReceiveConnectionFactory(self))
         #self.myPort = port
         #self.transport.write("")
 
@@ -87,19 +90,11 @@ class SendConnFactry(ClientFactory):
         return SendConnection()
 
     def clientConnectionFailed(self, connector, reason):
-        #print 'couldnt connect||' + str(connector)+ '||' + str(reason)
-        #print connectAttempts
-        print 'connect failed'
-        reactor.stop()
-        if connectAttempts < 1:
-            print 'why'
-            #connectAttempts = connectAttempts + 1
-            #reactor.connectTCP(HOST, 40046, SendConnFactry())
-            #self.connectAttempts += 1
-        else:
-            reactor.stop()
+        print 'connect failed, connecting as Player 2'
+	player = 2
+        reactor.connectTCP(HOST, 40046, SendConnFactry())
 
 if __name__ == "__main__":
     reactor.connectTCP(GAME_SERVER, int(SEND_PORT1), SendConnFactry())
-#    reactor.listenTCP(GAME_SERVER, RECEIVE_PORT1, ReceiveConnectionFactory())
+    reactor.listenTCP(RECEIVE_PORT1, ReceiveConnectionFactory())
     reactor.run()
