@@ -1,4 +1,4 @@
-# name: Max Walsh
+# name: Max Walsh, Jack Ryan
 # date: 5/4/16
 
 
@@ -17,26 +17,21 @@ from twisted.internet import reactor
 GAME_SERVER = 'student02.cse.nd.edu'
 SEND_PORT1 = 40028
 SEND_PORT2 = 40046
-connectAttempts = 0
 #server receives on
 # 40028
 # 40046
 
 RECEIVE_PORT1 = 9575
-RECEIVE_PORT2 = 9576
+#RECEIVE_PORT2 = 9576
 #SERVER sends on
 #9575
 #9576
-player = 1
 
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, gs=None):
         pygame.sprite.Sprite.__init__(self)
         self.gs = gs
-        self.port1 = '40028'
-        self.port2 = '40046'
-        self.myPort = ''
 
 class receiveConnection(Protocol):
     def __init__(self, sendConn):
@@ -68,12 +63,8 @@ class SendConnection(Protocol):
 
     def connectionMade(self):
         print "connection made: " #+ str(port)
-	if player == 1:
-            reactor.listenTCP(int(RECEIVE_PORT1), ReceiveConnectionFactory(self))
-        else:
-            reactor.listenTCP(int(RECEIVE_PORT2), ReceiveConnectionFactory(self))
-        #self.myPort = port
-        #self.transport.write("")
+        reactor.listenTCP(RECEIVE_PORT1, ReceiveConnectionFactory())
+
 
     def connectionLost(self, reason):
         print 'lost connection:'
@@ -96,5 +87,5 @@ class SendConnFactry(ClientFactory):
 
 if __name__ == "__main__":
     reactor.connectTCP(GAME_SERVER, int(SEND_PORT1), SendConnFactry())
-    reactor.listenTCP(RECEIVE_PORT1, ReceiveConnectionFactory())
+    #reactor.listenTCP(RECEIVE_PORT1, ReceiveConnectionFactory())
     reactor.run()

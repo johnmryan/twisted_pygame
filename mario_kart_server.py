@@ -12,6 +12,7 @@ from twisted.internet.defer import DeferredQueue
 PLAYER1_PORT = 40028
 PLAYER1_OPEN_PORT = 9575
 PLAYER1_HOST = ""
+PLAYER1_CONNECT = 0
 
 PLAYER2_PORT = 40046
 PLAYER2_OPEN_PORT = 9576
@@ -39,6 +40,8 @@ class Player1_IncomingConnection(Protocol):
 		print "Connection receieved from player 1"
 		# listen for player 2
 		reactor.listenTCP(PLAYER2_PORT, Player2_IncomingConnFactory())
+
+
 
 	def connectionLost(self, reason):
 		print "Lost connection from player 1:", str(reason)
