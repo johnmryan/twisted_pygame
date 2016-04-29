@@ -55,6 +55,12 @@ class receiveConnection(Protocol):
     def sendData(self, data):
         print 'send:'
 
+class ReceiveConnectionFactory(ClientFactory):
+    def __init__(self, sendConn):
+        self.sendConn = sendConn
+
+    def buildProtocol(self, addr):
+        return ReceiveConnection(self.sendConn)
 
 class SendConnection(Protocol):
     def dataReceived(self, data):
@@ -62,6 +68,7 @@ class SendConnection(Protocol):
 
     def connectionMade(self, port):
         print "connection made: " + str(port)
+        reactor.listen(GAME_SERVER, RECEIVE_PORT1, ReceiveConnectionFactory(self))
         #self.myPort = port
         #self.transport.write("")
 
@@ -86,13 +93,13 @@ class SendConnFactry(ClientFactory):
         reactor.stop()
         if connectAttempts < 1:
             print 'why'
-            connectAttempts = connectAttempts + 1
-            reactor.connectTCP(HOST, 40046, SendConnFactry())
+            #connectAttempts = connectAttempts + 1
+            #reactor.connectTCP(HOST, 40046, SendConnFactry())
             #self.connectAttempts += 1
         else:
             reactor.stop()
 
 if __name__ == "__main__":
     reactor.connectTCP(GAME_SERVER, SEND_PORT1, SendConnFactry())
-    reactor.listenTCP(GAME_SERVER, RECEIVE_PORT1, receiveConnectionFactory())
+#    reactor.listenTCP(GAME_SERVER, RECEIVE_PORT1, ReceiveConnectionFactory())
     reactor.run()
