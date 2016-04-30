@@ -11,6 +11,7 @@ from twisted.internet.task import LoopingCall
 import pygame
 from pygame.locals import *
 import cPickle as pickle
+import json
 # use import pickle to debug
 
 ###################    Globals   ######################
@@ -35,8 +36,10 @@ class GameState:
 		self.size = self.width, self.height = 1888, 1648
 		self.black = 0, 0, 0
 
-		self.playerOne = 0, 0 # Location
-		self.playerTwo = 0, 0
+		self.mario_x = 470
+		self.mario_y = 455
+		self.yoshi_x = 500
+		self.yoshi_y = 460
 
 		self.finishLineStart = (500, 900)
 		self.finishLineEnd = (500, 1000)
@@ -45,10 +48,51 @@ class GameState:
 		#print 'game_tick'
 		pass
 
+	def getPlayer1_Connection(self, p1_conn):
+		self.player1_Conn = p1_conn
+
+	def getPlayer2_Connection(self, p2_conn):
+		self.player2_Conn = p2_conn
+
+	def check_track_bound(self):
+		pass 
+
 	def decode_data(self, data):
 		print data
 		dataList = data.split(":")
-		#print dataList[0]
+		if dataList[0] == '1':
+			if dataList[1] == '273':
+				self.mario_y -= 10
+			elif dataList[1] == '274':
+				self.mario_y += 10
+			elif dataList[1] == '275':
+				self.mario_x += 10
+			elif dataList[1] == '276':
+				self.mario_x -= 10
+			elif dataList[1] == '-1':
+				reactor.stop()
+		elif dataList[0] == '2':
+			if dataList[1] == '273':
+				self.yoshi_y -= 10
+			elif dataList[1] == '274':
+				self.yoshi_y += 10
+			elif dataList[1] == '275':
+				self.yoshi_x += 10
+			elif dataList[1] == '276':
+				self.yoshi_x -= 10
+			elif dataList[1] == '-1':
+				rector.stop()
+		else:
+			print'this is working'
+		string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y})
+		self.player1_Conn.sendData(string)
+		self.player2_Conn.sendData(string)
+		dq.get().addCallback(gs.decode_data)
+
+# 273 up
+# 274 down
+# 275 right
+# 276 left
 
 gs = GameState()
 
@@ -61,17 +105,19 @@ class Player1_Connection(Protocol):
 	def __init__(self, addr):
 		self.addr = addr
 		PLAYER1_HOST = addr.host
+		#self.player2_conn = ""
 
 	def dataReceived(self, data):
 		# data received from player 1
-		#dq.put(data)
+		dq.put(data)
 		print str(data)
 
 	def connectionMade(self):
 		print "Connection receieved from player 1"
 		# listen for player 2
+		gs.getPlayer1_Connection(self)
 		reactor.listenTCP(PLAYER2_PORT, Player2_ConnFactory(self))
-
+		
 
 	def connectionLost(self, reason):
 		print "Lost connection from player 1:", str(reason)
@@ -79,10 +125,15 @@ class Player1_Connection(Protocol):
 	def startForwarding(self):
 		# start forwarding the player 1 data
 		print "sendData"
+		dq.get().addCallback(gs.decode_data)
 
 	def sendData(self, data):
 		# not sure
-		print "sendData P1"
+		print "send P1 data to P2"
+		self.transport.write(data)		
+
+	def getPlayer2_Connection(self, player2_conn):
+		self.player2_conn = player2_conn
 
 class Player2_ConnFactory(Factory):
 	def __init__(self, player1_conn):
@@ -106,7 +157,9 @@ class Player2_Connection(Protocol):
 	def connectionMade(self):
 		print "Connection receieved from player 2"
 		print "ready to begin game"
-		#self.startForwarding()
+		self.player1_conn.getPlayer2_Connection(self)
+		gs.getPlayer2_Connection(self)
+		self.startForwarding()
 
 	def connectionLost(self, reason):
 		print "Lost connection from player 2:", str(reason)
@@ -114,11 +167,15 @@ class Player2_Connection(Protocol):
 	def startForwarding(self):
 		# start forwarding the player 2 data
 		print "sendData"
+		#dq.get().addCallback(gs.decode_data)
 		dq.get().addCallback(gs.decode_data)
 
 	def sendData(self, data):
 		# not sure
-		print "sendData P2"
+		#print "sendData P2"
+		print 'send P2 data to P1'
+		self.transport.write(data)
+
 
 
 if __name__ == "__main__":
