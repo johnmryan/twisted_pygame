@@ -67,7 +67,8 @@ class Player1_IncomingConnection(Protocol):
 
 	def dataReceived(self, data):
 		# data received from player 1
-		dq.put(data)
+		#dq.put(data)
+		print str(data)
 
 	def connectionMade(self):
 		print "Connection receieved from player 1"
@@ -102,13 +103,14 @@ class Player2_IncomingConnection(Protocol):
 
 	def dataReceived(self, data):
 		# data received from player 2
+		print str(data)
 		dq.put(data)
 
 	def connectionMade(self):
 		print "Connection receieved from player 2"
 		# initiate outgoing to player 1
 		reactor.connectTCP(PLAYER1_HOST, PLAYER1_OPEN_PORT, Player1_OutgoingConnFactory(self.player1_incoming_conn, self))
-		self.startForwarding()
+		#self.startForwarding()
 
 	def connectionLost(self, reason):
 		print "Lost connection from player 2:", str(reason)
