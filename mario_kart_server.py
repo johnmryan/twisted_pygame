@@ -21,7 +21,6 @@ PLAYER2_HOST = ""
 # Global deferred queue, handles input from both players
 dq = DeferredQueue()
 
-
 ############ Incoming Player Connections #############
 class Player1_IncomingConnFactory(Factory):
 	def buildProtocol(self, addr):
