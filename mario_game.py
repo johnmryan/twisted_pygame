@@ -33,9 +33,9 @@ class MarioKart():
 		self.yoshi_rect = self.yoshi_image.get_rect()
 		self.yoshi_rect.x = self.yoshiX
 		self.yoshi_rect.y = self.yoshiY
+		pygame.key.set_repeat(1, 30)
 		
 	def game_tick(self):
-		pygame.key.set_repeat(1, 20)
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				self.sendData(-1)

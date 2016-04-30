@@ -70,7 +70,7 @@ class GameState:
 			elif dataList[1] == '276': # LEFT
 				self.yoshi_x -= 10
 			elif dataList[1] == '-1':
-				rector.stop()
+				reactor.stop()
 		else:
 			print'this is working'
 		string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y})
