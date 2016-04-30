@@ -43,13 +43,19 @@ class GameState:
 	def getPlayer2_Connection(self, p2_conn):
 		self.player2_Conn = p2_conn
 
-	def check_track_bound(self):
-		pass 
+	def check_track_bound(self, x, y):
+		
+
+
 
 	def decode_data(self, data):
 		print data
 		dataList = data.split(":")
+		if dataList[1] == '-1':
+			reactor.stop()
+			return
 		if dataList[0] == '1':
+			
 			if dataList[1] == '273': # UP
 				self.mario_y -= 10
 			elif dataList[1] == '274': # DOWN
@@ -58,8 +64,9 @@ class GameState:
 				self.mario_x += 10
 			elif dataList[1] == '276': # LEFT
 				self.mario_x -= 10
-			elif dataList[1] == '-1':
-				reactor.stop()
+			if self.check_track_bound(self.mario_x, self.mario_y) == False:
+				self.mario_x = 470
+				self.mario_y = 455
 		elif dataList[0] == '2':
 			if dataList[1] == '273': # UP
 				self.yoshi_y -= 10
@@ -69,8 +76,9 @@ class GameState:
 				self.yoshi_x += 10
 			elif dataList[1] == '276': # LEFT
 				self.yoshi_x -= 10
-			elif dataList[1] == '-1':
-				reactor.stop()
+			if self.check_track_bound(self.yoshi_x, self.yoshi_y) == False:
+				self.yoshi_x = 500
+				self.yoshi_y = 460
 		else:
 			print'this is working'
 		string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y})
