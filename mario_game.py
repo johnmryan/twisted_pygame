@@ -27,27 +27,41 @@ class MarioKart():
 		# Yoshi initialization
 		self.yoshiX = 500
 		self.yoshiY = 460
+		self.yoshi_image = pygame.image.load("assets/yoshi.png")
+		self.yoshi_image_old = self.yoshi_image
+		self.yoshi_image = pygame.transform.flip(self.yoshi_image_old, True, False)
+		self.yoshi_rect = self.yoshi_image.get_rect()
+		self.yoshi_rect.x = self.yoshiX
+		self.yoshi_rect.y = self.yoshiY
+		pygame.key.set_repeat(1, 30)
 		
 	def game_tick(self):
-		pygame.key.set_repeat(1, 20)
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				sys.exit()
+				self.sendData(-1)
 			if event.type == pygame.KEYDOWN:
 				if event.key >= 273 and event.key <= 276:
 					# this is a movement key
-					self.movePlayer(event.key)
+					self.sendData(event.key)
 
 			self.screen.blit(self.background, self.background_rect)
 			self.screen.blit(self.mario_image, self.mario_rect)
+			self.screen.blit(self.yoshi_image, self.yoshi_rect)
 			pygame.display.flip()
 
-	def getOutgoingConnection(self, outgoingConn):
-		self.outgoingConn = outgoingConn
-
-	def movePlayer(self, keyNum):
+	def sendData(self, keyNum):
 		if self.isPlayer1:
 			self.outgoingConn.transport.write("1:" + str(keyNum))
 		else:
 			self.outgoingConn.transport.write("2:" + str(keyNum))
 
+	def transferConnectionObject(self, obj):
+		self.outgoingConn = obj
+
+	def handleData(self, data):
+		self.mario_rect.x = int(data['mario_x'])
+		self.mario_rect.y = int(data['mario_y'])
+		self.yoshi_rect.x = int(data['yoshi_x'])
+		self.yoshi_rect.y = int(data['yoshi_y'])
+		
+		
