@@ -27,6 +27,12 @@ class MarioKart():
 		# Yoshi initialization
 		self.yoshiX = 500
 		self.yoshiY = 460
+		self.yoshi_image = pygame.image.load("assets/yoshi.png")
+		self.yoshi_image_old = self.yoshi_image
+		self.yoshi_image = pygame.transform.flip(self.yoshi_image_old, True, False)
+		self.yoshi_rect = self.yoshi_image.get_rect()
+		self.yoshi_rect.x = self.yoshiX
+		self.yoshi_rect.y = self.yoshiY
 		
 	def game_tick(self):
 		pygame.key.set_repeat(1, 20)
@@ -50,3 +56,11 @@ class MarioKart():
 
 	def transferConnectionObject(self, obj):
 		self.outgoingConn = obj
+
+	def handleData(self, data):
+		self.mario_rect.x = int(data['mario_x'])
+		self.mario_rect.y = int(data['mario_y'])
+		self.yoshi_rect.x = int(data['yoshi_x'])
+		self.yoshi_rect.y = int(data['yoshi_y'])
+		
+		

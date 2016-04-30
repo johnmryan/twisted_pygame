@@ -33,6 +33,7 @@ class PlayerConnection(Protocol):
 
     def dataReceived(self, data):
         print 'data:' + str(data)
+		self.handleReceievedData(self, data)
 
     def connectionMade(self):
         print 'Receive Connection made'
@@ -43,6 +44,12 @@ class PlayerConnection(Protocol):
 
     def sendData(self, data):
         print 'send:'
+
+	def handleReceivedData(self, data):
+        obj = json.loads(data)
+        self.game.handleData(obj)
+
+
 
 
 if __name__ == "__main__":
