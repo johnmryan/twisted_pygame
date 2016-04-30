@@ -62,7 +62,7 @@ class SendConnection(Protocol):
         print 'received data' + str(data)
 
     def connectionMade(self):
-        print "connected as Player 1"
+        print "connected as Player 2"
         #3try:
         reactor.listenTCP(RECEIVE_PORT1, ReceiveConnectionFactory())
         #except Exception as ex:
