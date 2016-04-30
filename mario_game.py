@@ -32,22 +32,21 @@ class MarioKart():
 		pygame.key.set_repeat(1, 20)
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				sys.exit()
+				self.sendData(-1)
 			if event.type == pygame.KEYDOWN:
 				if event.key >= 273 and event.key <= 276:
 					# this is a movement key
-					self.movePlayer(event.key)
+					self.sendData(event.key)
 
 			self.screen.blit(self.background, self.background_rect)
 			self.screen.blit(self.mario_image, self.mario_rect)
 			pygame.display.flip()
 
-	def getOutgoingConnection(self, outgoingConn):
-		self.outgoingConn = outgoingConn
-
-	def movePlayer(self, keyNum):
+	def sendData(self, keyNum):
 		if self.isPlayer1:
 			self.outgoingConn.transport.write("1:" + str(keyNum))
 		else:
 			self.outgoingConn.transport.write("2:" + str(keyNum))
 
+	def transferConnectionObject(self, obj):
+		self.outgoingConn = obj
