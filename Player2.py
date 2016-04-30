@@ -13,6 +13,8 @@ from pygame.locals import *
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
+from mario_game import MarioKart
+from twisted.internet.task import LoopingCall
 
 GAME_SERVER = 'student02.cse.nd.edu'
 SEND_PORT1 = 40046
@@ -58,6 +60,10 @@ class ReceiveConnectionFactory(ClientFactory):
         return ReceiveConnection(self.sendConn)
 
 class SendConnection(Protocol):
+    def __init__(self, game):
+        self.game = game
+        self.game.getOutgoingConnection(self)
+
     def dataReceived(self, data):
         print 'received data' + str(data)
 
@@ -75,21 +81,24 @@ class SendConnection(Protocol):
         self.transport.write(data)
 
 class SendConnFactory(ClientFactory):
-    #def __init__(self):
-        #self.connectAttempts = 0
+    def __init__(self, game):
+        self.game = game
 
     def buildProtocol(self, addr):
-        return SendConnection()
+        return SendConnection(self.game)
 
     def clientConnectionFailed(self, connector, reason):
         print 'connect failed, connecting as Player 2'
-	#player = 2
+    #player = 2
         reactor.connectTCP(GAME_SERVER, SEND_PORT2, SendConnFactory())
 
 if __name__ == "__main__":
-    try: 
-        reactor.connectTCP(GAME_SERVER, int(SEND_PORT1), SendConnFactory())
-    except Exception as ex:
-        reactor.connectTCP(GAME_SERVER, int(SEND_PORT2), SendConnFactory)
+    game = MarioKart(2)
+
+    DESIRED_FPS = 30.0
+    
+    tick = LoopingCall(game.game_tick)
+    tick.start(1.0 / DESIRED_FPS)
+    reactor.connectTCP(GAME_SERVER, int(SEND_PORT1), SendConnFactory(game))
     #reactor.listenTCP(RECEIVE_PORT1, ReceiveConnectionFactory())
     reactor.run()
