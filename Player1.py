@@ -62,6 +62,7 @@ class ReceiveConnectionFactory(ClientFactory):
 class SendConnection(Protocol):
     def __init__(self, game):
         self.game = game
+        self.game.getOutgoingConnection(self)
 
     def dataReceived(self, data):
         print 'received data' + str(data)
@@ -92,15 +93,14 @@ class SendConnFactory(ClientFactory):
         reactor.connectTCP(GAME_SERVER, SEND_PORT2, SendConnFactory())
 
 if __name__ == "__main__":
-    game = MarioKart()
+    game = MarioKart(1)
     
     DESIRED_FPS = 30.0
     
     tick = LoopingCall(game.game_tick)
     tick.start(1.0 / DESIRED_FPS)
-    
-    reactor.connectTCP(GAME_SERVER, int(SEND_PORT1), SendConnFactory(game))
+    sendConnFactory = SendConnFactory(game)
+    reactor.connectTCP(GAME_SERVER, int(SEND_PORT1), sendConnFactory)
     #reactor.listenTCP(RECEIVE_PORT1, ReceiveConnectionFactory())
-    
     reactor.run()
 
