@@ -8,20 +8,14 @@ from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredQueue
 from twisted.internet.task import LoopingCall
-import pygame
-from pygame.locals import *
-import cPickle as pickle
 import json
 # use import pickle to debug
 
 ###################    Globals   ######################
 PLAYER1_PORT = 40028
-#PLAYER1_OPEN_PORT = 9575
 PLAYER1_HOST = ""
-#PLAYER1_CONNECT = 0
 
 PLAYER2_PORT = 40046
-#PLAYER2_OPEN_PORT = 9576
 PLAYER2_HOST = ""
 
 # Global deferred queue, handles input from both players
@@ -32,7 +26,6 @@ FPS = 30.0
 class GameState:
 	#def main(self):
 	def __init__(self):
-		#pygame.init()
 		self.size = self.width, self.height = 1888, 1648
 		self.black = 0, 0, 0
 
@@ -43,10 +36,6 @@ class GameState:
 
 		self.finishLineStart = (500, 900)
 		self.finishLineEnd = (500, 1000)
-
-	def game_tick(self):
-		#print 'game_tick'
-		pass
 
 	def getPlayer1_Connection(self, p1_conn):
 		self.player1_Conn = p1_conn
@@ -61,24 +50,24 @@ class GameState:
 		print data
 		dataList = data.split(":")
 		if dataList[0] == '1':
-			if dataList[1] == '273':
+			if dataList[1] == '273': # UP
 				self.mario_y -= 10
-			elif dataList[1] == '274':
+			elif dataList[1] == '274': # DOWN
 				self.mario_y += 10
-			elif dataList[1] == '275':
+			elif dataList[1] == '275': # RIGHT
 				self.mario_x += 10
-			elif dataList[1] == '276':
+			elif dataList[1] == '276': # LEFT
 				self.mario_x -= 10
 			elif dataList[1] == '-1':
 				reactor.stop()
 		elif dataList[0] == '2':
-			if dataList[1] == '273':
+			if dataList[1] == '273': # UP
 				self.yoshi_y -= 10
-			elif dataList[1] == '274':
+			elif dataList[1] == '274': # DOWN
 				self.yoshi_y += 10
-			elif dataList[1] == '275':
+			elif dataList[1] == '275': # RIGHT
 				self.yoshi_x += 10
-			elif dataList[1] == '276':
+			elif dataList[1] == '276': # LEFT
 				self.yoshi_x -= 10
 			elif dataList[1] == '-1':
 				rector.stop()
@@ -89,14 +78,9 @@ class GameState:
 		self.player2_Conn.sendData(string)
 		dq.get().addCallback(gs.decode_data)
 
-# 273 up
-# 274 down
-# 275 right
-# 276 left
-
 gs = GameState()
 
-############ Incoming Player Connections #############
+
 class Player1_ConnFactory(Factory):
 	def buildProtocol(self, addr):
 		return Player1_Connection(addr)
@@ -175,7 +159,6 @@ class Player2_Connection(Protocol):
 		#print "sendData P2"
 		print 'send P2 data to P1'
 		self.transport.write(data)
-
 
 
 if __name__ == "__main__":
