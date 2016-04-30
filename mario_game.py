@@ -46,6 +46,7 @@ class MarioKart():
 
 			self.screen.blit(self.background, self.background_rect)
 			self.screen.blit(self.mario_image, self.mario_rect)
+			self.screen.blit(self.yoshi_image, self.yoshi_rect)
 			pygame.display.flip()
 
 	def sendData(self, keyNum):

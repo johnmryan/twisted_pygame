@@ -41,7 +41,7 @@ class PlayerConnection(Protocol):
         print 'Receive Connection made'
 
     def connectionLost(self, reason):
-        print 'lost connection'
+        print 'Lost connection to game server.'
         reactor.stop()
 
     def sendData(self, data):
