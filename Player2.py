@@ -9,6 +9,7 @@ import sys
 import os
 import math
 import pygame
+import json
 from pygame.locals import *
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
@@ -33,7 +34,7 @@ class PlayerConnection(Protocol):
 
     def dataReceived(self, data):
         print 'data:' + str(data)
-		self.handleReceievedData(self, data)
+        self.handleReceivedData(data)
 
     def connectionMade(self):
         print 'Receive Connection made'
@@ -45,7 +46,7 @@ class PlayerConnection(Protocol):
     def sendData(self, data):
         print 'send:'
 
-	def handleReceivedData(self, data):
+    def handleReceivedData(self, data):
         obj = json.loads(data)
         self.game.handleData(obj)
 
