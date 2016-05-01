@@ -11,6 +11,7 @@ import math
 import pygame
 import json
 from pygame.locals import *
+from twisted.protocols.basic import LineReceiver
 from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol
 from twisted.internet import reactor
@@ -27,14 +28,14 @@ class PlayerConnectionFactory(ClientFactory):
     def buildProtocol(self, addr):
         return PlayerConnection(self.game)
 
-class PlayerConnection(Protocol):
+class PlayerConnection(LineReceiver):
     def __init__(self, game):
         self.game = game
         self.game.transferConnectionObject(self)
 
-    def dataReceived(self, data):
-        #print 'data:' + str(data)
-        self.handleReceivedData(data)
+    def lineReceived(self, line):
+        print 'data:' + str(line)
+        self.handleReceivedData(line)
 
     def connectionMade(self):
         print 'Receive Connection made'

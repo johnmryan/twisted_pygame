@@ -30,19 +30,23 @@ class GameState:
 		self.mario_y = 134
 		self.yoshi_x = 474
 		self.yoshi_y = 208
-		
-		self.mario_speed = 10
-		self.yoshi_speed = 10
 
 		self.mario_was_in_box = False
 		self.yoshi_was_in_box = False
 		self.mario_cross_finish_line = False
-		self.yoshi_cross_finish_line = 0
+		self.yoshi_cross_finish_line = False
 
 		self.mario_won = False
 		self.yoshi_won = False
 
 		self.finish_start_x = 433
+
+		self.boost1_taken = False
+		self.boost2_taken = False
+		self.boost3_taken = False
+		self.boost4_taken = False
+		self.mario_speed = 5
+		self.yoshi_speed = 5
 
 
 	def getPlayer1_Connection(self, p1_conn):
@@ -78,6 +82,43 @@ class GameState:
 		if y >= 250 and y <= 670 and x >= 255 and x <= 920:
 			return False
 		return True
+
+	def applyBoosts(self):
+		if not self.boost1_taken:
+			# boost1 is still open for the taking
+			if self.mario_x >= 320 and self.mario_x <= 345 and self.mario_y >= 160 and self.mario_y <= 185:
+				self.mario_speed += 1
+				self.boost1_taken = True
+			elif self.yoshi_x >= 320 and self.yoshi_x <= 345 and self.yoshi_y >= 160 and self.yoshi_y <= 185:
+				self.yoshi_speed += 1
+				self.boost1_taken = True
+
+		if not self.boost2_taken:
+			# boost2 is still open for the taking
+			if self.mario_x >= 140 and self.mario_x <= 165 and self.mario_y >= 420 and self.mario_y <= 445:
+				self.mario_speed += 2
+				self.boost2_taken = True
+			elif self.yoshi_x >= 140 and self.yoshi_x <= 165 and self.yoshi_y >= 420 and self.yoshi_y <= 445:
+				self.yoshi_speed += 2
+				self.boost2_taken = True
+		
+		if not self.boost3_taken:
+			# boost4 is still open for the taking
+			if self.mario_x >= 530 and self.mario_x <= 555 and self.mario_y >= 710 and self.mario_y <= 735:
+				self.mario_speed += 3
+				self.boost3_taken = True
+			elif self.yoshi_x >= 530 and self.yoshi_x <= 555 and self.yoshi_y >= 710 and self.yoshi_y <= 735:
+				self.yoshi_speed += 3
+				self.boost3_taken = True
+		
+		if not self.boost4_taken:
+			# boost3 is still open for the taking
+			if self.mario_x >= 930 and self.mario_x <= 955 and self.mario_y >= 490 and self.mario_y <= 515:
+				self.mario_speed += 4
+				self.boost4_taken = True
+			elif self.yoshi_x >= 930 and self.yoshi_x <= 955 and self.yoshi_y >= 490 and self.yoshi_y <= 515:
+				self.yoshi_speed += 4
+				self.boost4_taken = True
 
 	def decode_data(self, data):
 		print data
@@ -124,7 +165,9 @@ class GameState:
 		else:
 			print'this is working'
 
-		string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y})
+		self.applyBoosts()
+
+		string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'mario_won':gs.mario_won, 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y, 'yoshi_won':gs.yoshi_won})
 		self.player1_Conn.sendData(string)
 		self.player2_Conn.sendData(string)
 		dq.get().addCallback(gs.decode_data)
@@ -165,7 +208,7 @@ class Player1_Connection(Protocol):
 	def sendData(self, data):
 		# not sure
 		print "send P1 data to P2"
-		self.transport.write(data)		
+		self.transport.write(data + '\r\n')		
 
 	def getPlayer2_Connection(self, player2_conn):
 		self.player2_conn = player2_conn
@@ -209,7 +252,7 @@ class Player2_Connection(Protocol):
 		# not sure
 		#print "sendData P2"
 		print 'send P2 data to P1'
-		self.transport.write(data)
+		self.transport.write(data + '\r\n')
 
 
 if __name__ == "__main__":
