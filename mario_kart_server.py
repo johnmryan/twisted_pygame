@@ -165,7 +165,7 @@ class Player1_Connection(Protocol):
 	def sendData(self, data):
 		# not sure
 		print "send P1 data to P2"
-		self.transport.write(data)		
+		self.transport.write(data + '\r\n')		
 
 	def getPlayer2_Connection(self, player2_conn):
 		self.player2_conn = player2_conn
@@ -209,7 +209,7 @@ class Player2_Connection(Protocol):
 		# not sure
 		#print "sendData P2"
 		print 'send P2 data to P1'
-		self.transport.write(data)
+		self.transport.write(data + '\r\n')
 
 
 if __name__ == "__main__":
