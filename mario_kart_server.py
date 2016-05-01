@@ -33,14 +33,44 @@ class GameState:
 		
 		self.mario_speed = 10
 		self.yoshi_speed = 10
-		self.finishLineStart = (500, 900)
-		self.finishLineEnd = (500, 1000)
+
+		self.mario_was_in_box = False
+		self.yoshi_was_in_box = False
+		self.mario_cross_finish_line = False
+		self.yoshi_cross_finish_line = 0
+
+		self.mario_won = False
+		self.yoshi_won = False
+
+		self.finish_start_x = 433
+
 
 	def getPlayer1_Connection(self, p1_conn):
 		self.player1_Conn = p1_conn
 
 	def getPlayer2_Connection(self, p2_conn):
 		self.player2_Conn = p2_conn
+
+	def checkWinner(self):
+		if self.mario_x > self.finish_start_x and self.mario_x < self.finish_start_x + 15 and self.mario_y < 257:
+			if self.mario_was_in_box and self.mario_cross_finish_line:
+				self.mario_won = True
+			else:					
+				self.mario_was_in_box = True
+		elif self.mario_x < self.finish_start_x + 15 and self.mario_y < 257:
+			self.mario_cross_finish_line = True
+		else:
+			self.mario_was_in_box = False
+
+		if self.yoshi_x > self.finish_start_x and self.yoshi_y < self.finish_start_x + 15 and self.yoshi_y < 257:
+			if self.yoshi_was_in_box and self.yoshi_cross_finish_line:
+				self.yoshi_won = True
+			else:
+				self.yoshi_was in box - True
+		elif self.yoshi_x < self.finish_start_x + 15 and self.yoshi_y < 257:
+			self.yoshi_cross_finish_line = True
+		else:
+			self.yoshi_was_in_box = False
 
 	def check_track_bound(self, x, y):
 		if x <= 110 or x >= 1070 or y <= 110 or y >= 774:
@@ -56,7 +86,6 @@ class GameState:
 			reactor.stop()
 			return
 		if dataList[0] == '1':
-			
 			if dataList[1] == '273': # UP
 				self.mario_y -= self.mario_speed
 			elif dataList[1] == '274': # DOWN
@@ -64,10 +93,18 @@ class GameState:
 			elif dataList[1] == '275': # RIGHT
 				self.mario_x += self.mario_speed
 			elif dataList[1] == '276': # LEFT
+				if self.mario_x > self.finish_start_x:
+					self.mario_was_behind = True
+				else:
+					self.mario_was_behind = False
 				self.mario_x -= self.mario_speed
 			if self.check_track_bound(self.mario_x, self.mario_y) == False:
 				self.mario_x = 474
 				self.mario_y = 134
+				self.mario_cross_finish_line = False
+				self.mario_won = False
+			else:
+				self.checkWinner()
 		elif dataList[0] == '2':
 			if dataList[1] == '273': # UP
 				self.yoshi_y -= self.yoshi_speed
@@ -80,8 +117,13 @@ class GameState:
 			if self.check_track_bound(self.yoshi_x, self.yoshi_y) == False:
 				self.yoshi_x = 474
 				self.yoshi_y = 208
+				self.yoshi_cross_finish_line = False
+				self.yoshi_won = False
+			else:
+				self.checkWinner()
 		else:
 			print'this is working'
+
 		string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y})
 		self.player1_Conn.sendData(string)
 		self.player2_Conn.sendData(string)
