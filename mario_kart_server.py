@@ -57,9 +57,11 @@ class GameState:
         self.player2_Conn = p2_conn
 
     def checkWinner(self):
-        print 'mx:' + str(self.mario_x) + 'my:' +str(self.mario_y)
+        #print 'mx:' + str(self.mario_x) + 'my:' +str(self.mario_y)
         self.mario_was_in_box = True
+        self.yoshi_was_in_box = True
         if self.mario_x > self.finish_start_x and self.mario_x < self.finish_start_x + 15 and self.mario_y < 257:
+            print 'mario in finish box'
             if self.mario_was_in_box and self.mario_cross_finish_line:
                 self.mario_won = True
                 print 'mario won'
@@ -70,16 +72,17 @@ class GameState:
         #else:
         #    self.mario_was_in_box = False
 
-        if self.yoshi_x > self.finish_start_x and self.yoshi_y < self.finish_start_x + 15 and self.yoshi_y < 257:
+        if self.yoshi_x > self.finish_start_x and self.yoshi_x < self.finish_start_x + 15 and self.yoshi_y < 257:
+            print 'yoshi in finish box'
             if self.yoshi_was_in_box and self.yoshi_cross_finish_line:
                 self.yoshi_won = True
                 print 'yoshi won'
-            else:
-                self.yoshi_was_in_box = True
-        elif self.yoshi_x < self.finish_start_x + 15 and self.yoshi_y < 257:
+            #else:
+            #    self.yoshi_was_in_box = True
+        elif self.yoshi_x < self.finish_start_x and self.yoshi_y < 257:
             self.yoshi_cross_finish_line = True
-        else:
-            self.yoshi_was_in_box = False
+        #else:
+        #    self.yoshi_was_in_box = False
 
     def check_track_bound(self, x, y):
 		# If out of bounds, return false. If safe, return true
