@@ -157,7 +157,7 @@ class GameState:
 		else:
 			print'this is working'
 		self.applyBoosts()
-		string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y})
+		string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'mario_won':str(gs.mario_won), 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y, 'yoshi_won':str(gs.yoshi_won) })
 		self.player1_Conn.sendData(string)
 		self.player2_Conn.sendData(string)
 		dq.get().addCallback(gs.decode_data)
