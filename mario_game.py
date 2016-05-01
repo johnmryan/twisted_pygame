@@ -33,6 +33,43 @@ class MarioKart():
 		self.yoshi_rect = self.yoshi_image.get_rect()
 		self.yoshi_rect.x = self.yoshiX
 		self.yoshi_rect.y = self.yoshiY
+
+		# Boost arrows
+		self.boost1_x = 320
+		self.boost1_y = 160
+		self.boost1_image = pygame.image.load("assets/boost_arrow.png")
+		self.boost1_image_old = self.boost1_image
+		self.boost1_image = pygame.transform.flip(self.boost1_image_old, True, False)
+		self.boost1_rect = self.boost1_image.get_rect()
+		self.boost1_rect.x = self.boost1_x
+		self.boost1_rect.y = self.boost1_y
+
+		self.boost2_x = 140
+		self.boost2_y = 420
+		self.boost2_image = pygame.image.load("assets/boost_arrow.png")
+		self.boost2_image_old = self.boost2_image
+		self.boost2_image = pygame.transform.rotate(self.boost2_image_old, 270.)
+		self.boost2_rect = self.boost2_image.get_rect()
+		self.boost2_rect.x = self.boost2_x
+		self.boost2_rect.y = self.boost2_y
+
+		self.boost3_x = 930
+		self.boost3_y = 490
+		self.boost3_image = pygame.image.load("assets/boost_arrow.png")
+		self.boost3_image_old = self.boost3_image
+		self.boost3_image = pygame.transform.rotate(self.boost3_image_old, 90.)
+		self.boost3_rect = self.boost3_image.get_rect()
+		self.boost3_rect.x = self.boost3_x
+		self.boost3_rect.y = self.boost3_y
+
+		self.boost4_x = 530
+		self.boost4_y = 710
+		self.boost4_image = pygame.image.load("assets/boost_arrow.png")
+		self.boost4_image_old = self.boost4_image
+		self.boost4_rect = self.boost4_image.get_rect()
+		self.boost4_rect.x = self.boost4_x
+		self.boost4_rect.y = self.boost4_y
+		
 		pygame.key.set_repeat(1, 30)
 		
 	def game_tick(self):
@@ -47,6 +84,10 @@ class MarioKart():
 			self.screen.blit(self.background, self.background_rect)
 			self.screen.blit(self.mario_image, self.mario_rect)
 			self.screen.blit(self.yoshi_image, self.yoshi_rect)
+			self.screen.blit(self.boost1_image, self.boost1_rect)
+			self.screen.blit(self.boost2_image, self.boost2_rect)
+			self.screen.blit(self.boost3_image, self.boost3_rect)
+			self.screen.blit(self.boost4_image, self.boost4_rect)
 			pygame.display.flip()
 
 	def sendData(self, keyNum):
