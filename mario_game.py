@@ -24,6 +24,12 @@ class MarioKart():
 		self.mario_rect.x = self.marioX
 		self.mario_rect.y = self.marioY
 
+		self.mario_won = False
+		self.mario_winner_image = pygame.image.load("assets/mario_winner.png")
+		self.mario_winner_rect = self.mario_winner_image.get_rect()
+		self.mario_winner_rect.x = 474
+		self.mario_winner_rect.y = 230
+
 		# Yoshi initialization
 		self.yoshiX = 474
 		self.yoshiY = 208
@@ -33,6 +39,12 @@ class MarioKart():
 		self.yoshi_rect = self.yoshi_image.get_rect()
 		self.yoshi_rect.x = self.yoshiX
 		self.yoshi_rect.y = self.yoshiY
+
+		self.yoshi_won = False
+		self.yoshi_winner_image = pygame.image.load("assets/yoshi_winner.png")
+		self.yoshi_winner_rect = self.yoshi_winner_image.get_rect()
+		self.yoshi_winner_rect.x = 474
+		self.yoshi_winner_rect.y = 230
 
 		# Boost arrows
 		self.boost1_x = 320
@@ -88,6 +100,10 @@ class MarioKart():
 			self.screen.blit(self.boost2_image, self.boost2_rect)
 			self.screen.blit(self.boost3_image, self.boost3_rect)
 			self.screen.blit(self.boost4_image, self.boost4_rect)
+			if self.yoshi_won:
+				self.screen.blit(self.yoshi_winner_image, self.yoshi_winner_rect)
+			if self.mario_won:
+				self.screen.blit(self.mario_winner_image, self.mario_winner_rect)
 			pygame.display.flip()
 
 	def sendData(self, keyNum):
