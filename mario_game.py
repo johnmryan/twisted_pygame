@@ -69,6 +69,19 @@ class MarioKart():
 		self.boost4_rect = self.boost4_image.get_rect()
 		self.boost4_rect.x = self.boost4_x
 		self.boost4_rect.y = self.boost4_y
+
+		# Winner images
+		self.mario_won = False
+		self.mario_winner_image = pygame.image.load("assets/mario_winner.png")
+		self.mario_winner_rect = self.mario_winner_image.get_rect()
+		self.mario_winner_rect.x = 474
+		self.mario_winner_rect.y = 230
+		
+		self.yoshi_won = False
+		self.yoshi_winner_image = pygame.image.load("assets/yoshi_winner.png")
+		self.yoshi_winner_rect = self.yoshi_winner_image.get_rect()
+		self.yoshi_winner_rect.x = 474
+		self.yoshi_winner_rect.y = 230
 		
 		pygame.key.set_repeat(1, 30)
 		
@@ -81,14 +94,18 @@ class MarioKart():
 					# this is a movement key
 					self.sendData(event.key)
 
-			self.screen.blit(self.background, self.background_rect)
-			self.screen.blit(self.mario_image, self.mario_rect)
-			self.screen.blit(self.yoshi_image, self.yoshi_rect)
-			self.screen.blit(self.boost1_image, self.boost1_rect)
-			self.screen.blit(self.boost2_image, self.boost2_rect)
-			self.screen.blit(self.boost3_image, self.boost3_rect)
-			self.screen.blit(self.boost4_image, self.boost4_rect)
-			pygame.display.flip()
+		self.screen.blit(self.background, self.background_rect)
+		self.screen.blit(self.mario_image, self.mario_rect)
+		self.screen.blit(self.yoshi_image, self.yoshi_rect)
+		self.screen.blit(self.boost1_image, self.boost1_rect)
+		self.screen.blit(self.boost2_image, self.boost2_rect)
+		self.screen.blit(self.boost3_image, self.boost3_rect)
+		self.screen.blit(self.boost4_image, self.boost4_rect)
+		if self.yoshi_won:
+			self.screen.blit(self.yoshi_winner_image, self.yoshi_winner_rect)
+		if self.mario_won:
+			self.screen.blit(self.mario_winner_image, self.mario_winner_rect)
+		pygame.display.flip()
 
 	def sendData(self, keyNum):
 		if self.isPlayer1:
@@ -104,5 +121,9 @@ class MarioKart():
 		self.mario_rect.y = int(data['mario_y'])
 		self.yoshi_rect.x = int(data['yoshi_x'])
 		self.yoshi_rect.y = int(data['yoshi_y'])
+		if data['yoshi_won'] == "True":
+			self.yoshi_won = True
+		if data['mario_won'] == "True":
+			self.mario_won = True
 		
 		

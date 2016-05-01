@@ -82,6 +82,7 @@ class GameState:
             self.yoshi_was_in_box = False
 
     def check_track_bound(self, x, y):
+		# If out of bounds, return false. If safe, return true
         if x <= 110 or x >= 1070 or y <= 110 or y >= 774:
             return False
         if y >= 250 and y <= 670 and x >= 255 and x <= 920:
@@ -126,13 +127,13 @@ class GameState:
                 self.boost4_taken = True
 
     def decode_data(self, data):
-        print data 
         dataList = data.split(":")
         if dataList[1] == '-1':
+			# If either player quits, stop the reactor
             reactor.stop()
             return
         if dataList[0] == '1':
-            
+            # MARIO
             if dataList[1] == '273': # UP
                 self.mario_y -= self.mario_speed
             elif dataList[1] == '274': # DOWN
@@ -142,12 +143,14 @@ class GameState:
             elif dataList[1] == '276': # LEFT
                 self.mario_x -= self.mario_speed
             if self.check_track_bound(self.mario_x, self.mario_y) == False:
+				# If mario goes out of bounds, send him back to start
                 self.mario_x = 474
                 self.mario_y = 134
                 self.mario_cross_finish_line = False
                 self.mario_won = False
 
         elif dataList[0] == '2':
+			# YOSHI
             if dataList[1] == '273': # UP
                 self.yoshi_y -= self.yoshi_speed
             elif dataList[1] == '274': # DOWN
@@ -157,19 +160,22 @@ class GameState:
             elif dataList[1] == '276': # LEFT
                 self.yoshi_x -= self.yoshi_speed
             if self.check_track_bound(self.yoshi_x, self.yoshi_y) == False:
+				# If yoshi goes out of bounds, send him back to start
                 self.yoshi_x = 474
                 self.yoshi_y = 208
                 self.yoshi_cross_finish_line = False
                 self.yoshi_won = False
 
         else:
-            print'this is working'
-        self.applyBoosts()
-        self.checkWinner()
-        string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'mario_won':str(self.mario_won), 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y, 'yoshi_won':str(self.yoshi_won) })
-        self.player1_Conn.sendData(string)
-        self.player2_Conn.sendData(string)
-        dq.get().addCallback(self.decode_data)
+            print "Error: unexpected data sent from Player"
+
+        self.applyBoosts() # if either player ran over a boost, apply it
+        self.checkWinner() # check at each tick if a player has won
+		
+        return_string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'mario_won':str(self.mario_won), 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y, 'yoshi_won':str(self.yoshi_won) })
+        self.player1_Conn.sendData(return_string)
+        self.player2_Conn.sendData(return_string)
+        dq.get().addCallback(self.decode_data) # after decode data, reattach callback
 
 gs = GameState()
 
@@ -194,8 +200,7 @@ class Player1_Connection(Protocol):
         # listen for player 2
         gs.getPlayer1_Connection(self)
         reactor.listenTCP(PLAYER2_PORT, Player2_ConnFactory(self))
-        
-
+ 
     def connectionLost(self, reason):
         print "Lost connection from player 1:", str(reason)
 
@@ -205,8 +210,6 @@ class Player1_Connection(Protocol):
         dq.get().addCallback(gs.decode_data)
 
     def sendData(self, data):
-        # not sure
-        print "send P1 data to P2"
         self.transport.write(data + '\r\n')        
 
     def getPlayer2_Connection(self, player2_conn):
@@ -228,7 +231,6 @@ class Player2_Connection(Protocol):
 
     def dataReceived(self, data):
         # data received from player 2
-        print str(data)
         dq.put(data)
 
     def connectionMade(self):
@@ -243,14 +245,10 @@ class Player2_Connection(Protocol):
 
     def startForwarding(self):
         # start forwarding the player 2 data
-        print "sendData"
         #dq.get().addCallback(gs.decode_data)
         dq.get().addCallback(gs.decode_data)
 
     def sendData(self, data):
-        # not sure
-        #print "sendData P2"
-        print 'send P2 data to P1'
         self.transport.write(data + '\r\n')
 
 
