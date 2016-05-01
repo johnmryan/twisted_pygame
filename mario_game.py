@@ -15,8 +15,8 @@ class MarioKart():
 		self.background = pygame.image.load("assets/mario-kart-circuit.png")
 		self.background_rect = self.background.get_rect()
 		# Mario initialization
-		self.marioX = 470
-		self.marioY = 455
+		self.marioX = 474
+		self.marioY = 134
 		self.mario_image = pygame.image.load("assets/mario.png")
 		self.mario_image_old = self.mario_image
 		self.mario_image = pygame.transform.flip(self.mario_image_old, True, False)
@@ -25,8 +25,8 @@ class MarioKart():
 		self.mario_rect.y = self.marioY
 
 		# Yoshi initialization
-		self.yoshiX = 500
-		self.yoshiY = 460
+		self.yoshiX = 474
+		self.yoshiY = 208
 		self.yoshi_image = pygame.image.load("assets/yoshi.png")
 		self.yoshi_image_old = self.yoshi_image
 		self.yoshi_image = pygame.transform.flip(self.yoshi_image_old, True, False)
