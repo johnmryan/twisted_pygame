@@ -26,14 +26,13 @@ FPS = 30.0
 class GameState:
 	#def main(self):
 	def __init__(self):
-		self.size = self.width, self.height = 1888, 1648
-		self.black = 0, 0, 0
-
-		self.mario_x = 470
-		self.mario_y = 455
-		self.yoshi_x = 500
-		self.yoshi_y = 460
-
+		self.mario_x = 474
+		self.mario_y = 134
+		self.yoshi_x = 474
+		self.yoshi_y = 208
+		
+		self.mario_speed = 10
+		self.yoshi_speed = 10
 		self.finishLineStart = (500, 900)
 		self.finishLineEnd = (500, 1000)
 
@@ -44,9 +43,11 @@ class GameState:
 		self.player2_Conn = p2_conn
 
 	def check_track_bound(self, x, y):
-		
-
-
+		if x <= 110 or x >= 1070 or y <= 110 or y >= 774:
+			return False
+		if y >= 250 and y <= 670 and x >= 255 and x <= 920:
+			return False
+		return True
 
 	def decode_data(self, data):
 		print data
@@ -57,28 +58,28 @@ class GameState:
 		if dataList[0] == '1':
 			
 			if dataList[1] == '273': # UP
-				self.mario_y -= 10
+				self.mario_y -= self.mario_speed
 			elif dataList[1] == '274': # DOWN
-				self.mario_y += 10
+				self.mario_y += self.mario_speed
 			elif dataList[1] == '275': # RIGHT
-				self.mario_x += 10
+				self.mario_x += self.mario_speed
 			elif dataList[1] == '276': # LEFT
-				self.mario_x -= 10
+				self.mario_x -= self.mario_speed
 			if self.check_track_bound(self.mario_x, self.mario_y) == False:
-				self.mario_x = 470
-				self.mario_y = 455
+				self.mario_x = 474
+				self.mario_y = 134
 		elif dataList[0] == '2':
 			if dataList[1] == '273': # UP
-				self.yoshi_y -= 10
+				self.yoshi_y -= self.yoshi_speed
 			elif dataList[1] == '274': # DOWN
-				self.yoshi_y += 10
+				self.yoshi_y += self.yoshi_speed
 			elif dataList[1] == '275': # RIGHT
-				self.yoshi_x += 10
+				self.yoshi_x += self.yoshi_speed
 			elif dataList[1] == '276': # LEFT
-				self.yoshi_x -= 10
+				self.yoshi_x -= self.yoshi_speed
 			if self.check_track_bound(self.yoshi_x, self.yoshi_y) == False:
-				self.yoshi_x = 500
-				self.yoshi_y = 460
+				self.yoshi_x = 474
+				self.yoshi_y = 208
 		else:
 			print'this is working'
 		string = json.dumps({'mario_x':self.mario_x, 'mario_y':self.mario_y, 'yoshi_x':self.yoshi_x, 'yoshi_y':self.yoshi_y})
