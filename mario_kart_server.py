@@ -132,8 +132,6 @@ class GameState:
     def decode_data(self, data):
         dataList = data.split(":")
         if dataList[1] == '-1':
-			# If either player quits, stop the reactor
-            reactor.stop()
             return
         if dataList[0] == '1':
             # MARIO

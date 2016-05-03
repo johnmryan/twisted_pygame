@@ -40,7 +40,6 @@ class PlayerConnection(LineReceiver):
 
     def connectionLost(self, reason):
         print 'Lost connection to game server.'
-        sys.exit(0)
 
     def handleReceivedData(self, data):
         # Load data into JSON object, let the game handle it

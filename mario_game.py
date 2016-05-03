@@ -1,5 +1,6 @@
 import sys
 import pygame
+from twisted.internet import reactor
 
 # Class to handle the pygame, gets data from server and updates accordingly
 class MarioKart():
@@ -88,7 +89,7 @@ class MarioKart():
 	def game_tick(self):
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				self.sendData(-1)
+				reactor.stop()
 			if event.type == pygame.KEYDOWN:
 				if event.key >= 273 and event.key <= 276:
 					# this is a movement key
