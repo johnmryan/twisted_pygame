@@ -1,6 +1,8 @@
 # Pygame Parkway
 
-Gameplay: On student02 run mario_kart_server.py:
+Gameplay: 
+
+On student02 run mario_kart_server.py:
 $ python mario_kart_server.py
 
 Then run Player.py on another machine with the argument host:
